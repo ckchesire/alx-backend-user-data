@@ -5,6 +5,7 @@ This module filters and obfuscates senisitive log fields using regex.
 
 
 import re
+import logging
 from typing import List
 
 
@@ -29,4 +30,30 @@ def filter_datum(
             rf'({"|".join(fields)})=[^ {separator}]*',
             lambda m: f"{m.group(1)}={redaction}",
             message
-            )
+        )
+
+
+class RedactingFormatter(logging.Formatter):
+    """Redacting Formatter class"""
+    REDACTION = "***"
+    FRMT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields: List[str]):
+        """
+        Initializes the formatter with specific fields to redact
+        """
+        super(RedactingFormatter, self).__init__(self.FRMT)
+        self.fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        """
+        Apply filtering to log message
+        """
+        original = super().format(record)
+        return filter_datum(
+                self.fields,
+                self.REDACTION,
+                original,
+                self.SEPARATOR
+                )
