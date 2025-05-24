@@ -8,6 +8,7 @@ import re
 import os
 import logging
 from typing import List
+import mysql.connector
 from mysql.connector.connection import MySQLConnection
 
 
