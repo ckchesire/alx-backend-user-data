@@ -99,3 +99,26 @@ def get_logger() -> logging.Logger:
 
     logger.addHandler(stream_handler)
     return logger
+
+
+def main():
+    """
+    Main function that retrieves data from users table and logs each row with
+    sensitive fields redacted.
+    """
+    db = get_db()
+    cursor = db.cursor()
+
+    query = "SELECT * FROM users;"
+    cursor.execute(query)
+
+    field_names = [i[0] for i in cursor.description]
+    logger = get_logger()
+
+    for row in cursor:
+        row_dict = dict(zip(field_names, row))
+        message = "; ".join(f"{k}={v}" for k, v in row_dict.items()) + ";"
+        logger.info(message)
+
+    cursor.close()
+    db.close()
