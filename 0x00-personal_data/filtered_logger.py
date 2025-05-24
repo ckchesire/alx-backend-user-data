@@ -7,9 +7,30 @@ This module filters and obfuscates senisitive log fields using regex.
 import re
 import logging
 from typing import List
+from mysql.connector.connection import MySQLConnection
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def get_db() -> MySQLConnection:
+    """
+    Uses environment variables to connect securely to the MySQL database.
+
+    Returns:
+        MySQLConnection: A connection object to the database
+    """
+    username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    database = os.getenv("PERSONAL_DATA_DB_NAME")
+
+    return mysql.connector.connect(
+            user=username,
+            password=password,
+            host=host,
+            database=database
+            )
 
 
 def filter_datum(
