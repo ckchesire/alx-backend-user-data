@@ -16,7 +16,7 @@ class Auth():
               - True if excluded_paths is None or empty
               - False if path matches (with slash tolerance)
               - False if path in excluded_paths
-              - True otherwise
+              - False otherwise
         """
         if path is None:
             return True
@@ -31,7 +31,7 @@ class Auth():
             if excluded_paths == path:
                 return False
 
-        return True
+        return False
 
     def authorization_header(self, request=None) -> str:
         """No authentication header
