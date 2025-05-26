@@ -1,68 +1,42 @@
-# Authentication and Basic Auth with Base64
+# Simple API
 
-## What is Authentication?
-
-**Authentication** is the process of verifying the identity of a user or system. In web applications, authentication ensures that a user is who they claim to be—typically using credentials like usernames, passwords, or tokens.
-
-## What is Basic Authentication?
-
-**Basic Authentication** is a simple HTTP authentication scheme in which the client sends a username and password with each request. The credentials are encoded using **Base64** and included in the request's `Authorization` header.
-
-- It follows this format:
-```
-
-Authorization: Basic \<Base64(username\:password)>
-
-```
-
-> Basic Auth is not secure on its own and should only be used over HTTPS.
+Simple HTTP API for playing with `User` model.
 
 
-## What is Base64?
+## Files
 
-**Base64** is a method of encoding binary data into a text format using ASCII characters. It is commonly used to encode credentials or binary data in email, HTTP headers, or URLs.
+### `models/`
 
-- Base64 does **not** encrypt or secure data—it only encodes it in a readable format.
+- `base.py`: base of all models of the API - handle serialization to file
+- `user.py`: user model
 
-## How to Encode a String in Base64
+### `api/v1`
 
-To encode a string like `username:password` into Base64:
+- `app.py`: entry point of the API
+- `views/index.py`: basic endpoints of the API: `/status` and `/stats`
+- `views/users.py`: all users endpoints
 
-### Using Python
-```python
-import base64
 
-credentials = "username:password"
-encoded = base64.b64encode(credentials.encode()).decode()
-print(encoded)
-```
-
-## How to Send the Authorization Header
-
-After encoding your credentials, include them in the HTTP `Authorization` header:
-
-### Example with `curl`
-
-```bash
-curl -H "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" https://api.example.com/secure-data
-```
-
-### Example in HTTP request format
+## Setup
 
 ```
-GET /secure-data HTTP/1.1
-Host: api.example.com
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+$ pip3 install -r requirements.txt
 ```
 
 
-## Summary
+## Run
 
-* Authentication verifies identity.
-* Basic Auth uses Base64 to encode `username:password`.
-* Base64 is not encryption—use HTTPS to secure the transmission.
-* The Authorization header follows the format:
+```
+$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+```
 
-  ```
-  Authorization: Basic <Base64(username:password)>
-  ```
+
+## Routes
+
+- `GET /api/v1/status`: returns the status of the API
+- `GET /api/v1/stats`: returns some stats of the API
+- `GET /api/v1/users`: returns the list of users
+- `GET /api/v1/users/:id`: returns an user based on the ID
+- `DELETE /api/v1/users/:id`: deletes an user based on the ID
+- `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
+- `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
