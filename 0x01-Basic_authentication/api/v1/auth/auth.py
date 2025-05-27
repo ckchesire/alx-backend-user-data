@@ -16,6 +16,7 @@ class Auth():
               - True if excluded_paths is None or empty
               - False if path matches (with slash tolerance)
               - False if path in excluded_paths
+              - Supports wildcard '*' at the end of excluded paths
               - False otherwise
         """
         if path is None:
@@ -28,8 +29,14 @@ class Auth():
             path += '/'
 
         for excluded in excluded_paths:
-            if excluded == path:
-                return False
+            if excluded.endswith('*'):
+                if path.startswith(excluded[:-1]):
+                    return False
+            else:
+                if not excluded.endswith('/'):
+                    excluded += '/'
+                if excluded == path:
+                    return False
 
         return True
 
