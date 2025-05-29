@@ -3,6 +3,7 @@
 """
 from flask import jsonify, abort, request
 from api.v1.views import app_views
+from api.v1.app import auth
 from models.user import User
 import os
 
@@ -43,3 +44,17 @@ def session_login() -> str:
     response.set_cookie(cookie_name, session_id)
 
     return response
+
+
+@app_views.route(
+        '/auth_session/logout',
+        methods=['DELETE'],
+        strict_slashes=False)
+def logout():
+    """
+    Handle DELETE request to log out a user by destroying their session.
+    """
+    if not auth.destroy_session(request):
+        abort(404)
+
+    return jsonify({}), 200
