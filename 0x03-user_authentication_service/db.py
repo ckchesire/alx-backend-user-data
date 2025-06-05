@@ -66,9 +66,3 @@ class DB:
             setattr(user, key, value)
 
         self._session.commit()
-
-    def _hash_password(self, password: str) -> bytes:
-        """
-        Hash a password with bcrypt and return the hash as bytes
-        """
-        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
