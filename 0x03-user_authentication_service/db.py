@@ -2,7 +2,6 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
@@ -53,3 +52,16 @@ class DB:
             raise NoResultFound("No user found matching criteria.")
         except InvalidRequestError:
             raise InvalidRequestError("Invalid filter criteria.")
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Method updates a user attribute based on the user id.
+        """
+        user = self.find_user_by(id=user_id)
+
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError(f"Invalid attribute: {key}")
+            setattr(user, key, value)
+
+        self._session.commit()
