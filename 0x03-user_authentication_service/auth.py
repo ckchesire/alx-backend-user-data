@@ -6,7 +6,7 @@ import uuid
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
-from typing import Optional
+from typing import Optional, Union
 
 
 def _hash_password(password: str) -> bytes:
@@ -87,3 +87,16 @@ class Auth:
             self._db.update_user(user_id, session_id=None)
         except Exception as e:
             pass
+
+    def get_reset_password_token(self, email: str) -> str:
+        """
+        Generate a reset token for a user by email
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except Exception:
+            raise ValueError("User does not exist")
+
+        reset_token = str(uuid.uuid4())
+        self._db.update_user(user.id, reset_token=reset_token)
+        return reset_token
